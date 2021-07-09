@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "stm32f10x_rcc.h": "c",
+        "stm32f10x.h": "c",
+        "core_cm3.h": "c",
+        "systick.h": "c",
+        "stm32f10x_it.h": "c",
+        "stm32f10x_gpio.h": "c",
+        "misc.h": "c",
+        "stm32f10x_usart.h": "c",
+    }
+}
