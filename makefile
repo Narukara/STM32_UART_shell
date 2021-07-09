@@ -4,12 +4,12 @@ SRC = *.c lib/*.c lib/*.s app/*.c
 HEAD = *.h lib/*.h app/*.h
 INC = -I . -I lib -I app
 PWD = $(shell pwd)
-LD = -T lib/stm32_flash_ld.ld
-MACRO = -D USE_STDPERIPH_DRIVER -D STM32F10X_LD -D USE_FULL_ASSERT
-DEVICE = target/stm32f1x.cfg.bak
-
+LD = -T lib/stm32_flash_md.ld
+MACRO = -D USE_STDPERIPH_DRIVER -D STM32F10X_MD -D USE_FULL_ASSERT
+DEVICE = target/stm32f1x.cfg
 # 使用不同芯片：更改LD, MACRO, DEVICE
 
+# flash: 串口下载, download: stlink下载
 .PHONY: build clean download flash debug
 
 build : build/target.hex build/target.bin
