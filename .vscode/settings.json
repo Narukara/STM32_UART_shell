@@ -8,5 +8,8 @@
         "stm32f10x_gpio.h": "c",
         "misc.h": "c",
         "stm32f10x_usart.h": "c",
+        "string.h": "c",
+        "system_stm32f10x.h": "c",
+        "nar_string.h": "c"
     }
 }

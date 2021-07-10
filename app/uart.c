@@ -7,7 +7,7 @@ void uart_send_bit(u8 data) {
 }
 
 void uart_send(const char* s) {
-    for (u32 i = 0; s[i] != '\0'; i++) {
+    for (u8 i = 0; s[i] != '\0'; i++) {
         uart_send_bit(s[i]);
     }
 }

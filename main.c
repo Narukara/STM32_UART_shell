@@ -45,7 +45,7 @@ int main() {
     USART_Cmd(USART1, ENABLE);
 
     // welcome
-    uart_send("stm32 shell: Hello!\n\r");
+    uart_send("\r\nstm32 shell: Hello!\r\n");
     uart_send("stm32>");
 
     while (1) {
@@ -59,7 +59,7 @@ void USART1_IRQHandler(void) {
     u8 data = USART_ReceiveData(USART1);
     switch (data) {
         case 13:  // ascii CR, finish input
-            uart_send("\n\r");
+            uart_send("\r\n");
             input[now] = 0;
             now = 0;
             char output[32];
@@ -67,7 +67,7 @@ void USART1_IRQHandler(void) {
                 uart_send("ERROR:");
             }
             uart_send(output);
-            uart_send("\n\rstm32>");
+            uart_send("\r\nstm32>");
             break;
         default:  // common char
             if (now < 31) {
