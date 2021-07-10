@@ -1,9 +1,5 @@
+#include "nar_string.h"
 #include "stm32f10x.h"
-
-struct range {
-    u8 begin;
-    u8 end;
-};
 
 /**
  *      _  _   c  m  d _  _ /0
@@ -46,13 +42,20 @@ u8 string_length(const char* p) {
 }
 
 /**
- * WARNING: make sure length(p) <= length(q)
- * @return 0 if same
+ * WARNING: make sure length(p) <= length(q),
+ * and p should be lowcase
+ * @return 0 if same (ignore case)
  */
-u8 string_cmp(const char* p, const char* q) {
+u8 word_cmp(const char* p, const char* q) {
     for (u8 i = 0; p[i] != 0; i++) {
-        if (p[i] != q[i]) {
-            return 1;
+        if (q[i] >= 'A' && q[i] <= 'Z') {
+            if (p[i] != q[i] + 32) {
+                return 1;
+            }
+        } else {
+            if (p[i] != q[i]) {
+                return 1;
+            }
         }
     }
     return 0;
@@ -64,4 +67,21 @@ void string_copy(const char* s, char* target) {
         target[i] = s[i];
     }
     target[i] = 0;
+}
+
+/**
+ * @return 255 if no match
+ */
+u8 word_match(const struct keyword* words,
+              u8 num_of_words,
+              const char* target,
+              u8 length) {
+    for (u8 i = 0; i < num_of_words; i++) {
+        if (length == words[i].length) {
+            if (word_cmp(words[i].word, target) == 0) {
+                return i;
+            }
+        }
+    }
+    return 255;
 }
