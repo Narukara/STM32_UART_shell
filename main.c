@@ -52,8 +52,11 @@ int main() {
     }
 }
 
+#define MAX_IN 64
+#define MAX_OUT 64
+
 void USART1_IRQHandler(void) {
-    static char input[32];  // command should <= 31 char
+    static char input[MAX_IN];  // command should < MAX_IN
     static u8 now = 0;
     USART_ClearFlag(USART1, USART_FLAG_RXNE);
     u8 data = USART_ReceiveData(USART1);
@@ -62,7 +65,7 @@ void USART1_IRQHandler(void) {
             uart_send("\r\n");
             input[now] = 0;
             now = 0;
-            char output[32];
+            char output[MAX_OUT];
             if (cmd_handler(input, output)) {
                 uart_send("ERROR:");
             }
@@ -70,7 +73,7 @@ void USART1_IRQHandler(void) {
             uart_send("\r\nstm32>");
             break;
         default:  // common char
-            if (now < 31) {
+            if (now < MAX_IN - 1) {
                 input[now++] = data;
                 uart_send_bit(data);
             } else {
