@@ -10,9 +10,9 @@ DEVICE = target/stm32f1x.cfg
 # 使用不同芯片：更改LD, MACRO, DEVICE
 
 # flash: 串口下载, download: stlink下载
-.PHONY: build clean download flash debug
+.PHONY: build clean download flash debug size
 
-build : build/target.hex build/target.bin
+build : build/target.hex build/target.bin size
 
 build/target.bin : build/target.elf
 	arm-none-eabi-objcopy $< $@
@@ -22,6 +22,9 @@ build/target.hex : build/target.elf
 
 build/target.elf : $(SRC) $(HEAD)
 	$(CC) -o $@ $(SRC) $(INC) $(LD) $(MACRO) $(LINK)
+
+size :
+	arm-none-eabi-size build/target.elf -G
 
 clean : 
 	rm build/*

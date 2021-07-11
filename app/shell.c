@@ -1,23 +1,26 @@
 #include "stm32f10x.h"
 
 #include "echo.h"
+#include "gpio.h"
 #include "nar_string.h"
 #include "rcc.h"
 #include "shell.h"
 
-u8 help_handler(const char* param, char* output);
+static u8 help_handler(const char* param, char* output);
 
 // here to add cmd
-#define NUM_OF_CMDS 3
-static struct keyword cmds[] = {
+#define NUM_OF_CMDS 4
+static const struct keyword cmds[] = {
     {"help", 4},
     {"echo", 4},
     {"rcc", 3},
+    {"gpio", 4},
 };
-static u8 (*handler[])(const char*, char*) = {
+static const u8 (*handler[])(const char*, char*) = {
     help_handler,
     echo_handler,
     rcc_handler,
+    gpio_handler,
 };
 
 u8 cmd_handler(const char* cmd, char* output) {
@@ -39,13 +42,16 @@ u8 cmd_handler(const char* cmd, char* output) {
 }
 
 // here to add cmd info
-char* info[] = {
+static const char* info[] = {
     "help [cmd]",
     "echo [msg]",
-    "rcc [periph] [en/dis]",
+    "rcc [periph] en/dis",
+    "gpio init [port] [num] [mode] [speed]\r\n"
+    "gpio read [port] [num]\r\n"
+    "gpio write [port] [num] 1/0",
 };
 
-u8 help_handler(const char* param, char* output) {
+static u8 help_handler(const char* param, char* output) {
     struct range r = word_catch(param);
     u8 l = r.end - r.begin;
     if (l) {
@@ -56,7 +62,7 @@ u8 help_handler(const char* param, char* output) {
             string_copy("No such command", output);
         }
     } else {
-        string_copy("All cmd: help echo rcc", output);  // here to add cmd
+        string_copy("All cmd: help echo rcc gpio", output);  // here to add cmd
     }
     return 0;
 }
