@@ -1,40 +1,28 @@
 #include "nar_string.h"
 #include "stm32f10x_rcc.h"
 
-static const u32 periph[] = {
+#define NUM_OF_PERIPH 6
+static const char* PERIPH_KW[] = {
+    "gpioa", "gpiob", "gpioc", "tim1", "spi1", "adc1",
+};
+static const u32 PERIPH[] = {
     RCC_APB2Periph_GPIOA, RCC_APB2Periph_GPIOB, RCC_APB2Periph_GPIOC,
     RCC_APB2Periph_TIM1,  RCC_APB2Periph_SPI1,  RCC_APB2Periph_ADC1,
 };
-#define NUM_OF_PERIPH 6
-static const struct keyword periph_keyword[] = {
-    {"gpioa", 5}, {"gpiob", 5}, {"gpioc", 5},
-    {"tim1", 4},  {"spi1", 4},  {"adc1", 4},
-};
 
-static const FunctionalState status[] = {ENABLE, DISABLE};
-static const struct keyword en_dis[] = {{"en", 2}, {"dis", 3}};
+static const char* STATUS_KW[] = {"en", "dis"};
+static const FunctionalState STATUS[] = {ENABLE, DISABLE};
 
-u8 rcc_handler(const char* param, char* output) {
-    struct range r = word_catch(param);
-    u8 l = r.end - r.begin;
-    if (l) {
-        u8 which_p =
-            word_match(periph_keyword, NUM_OF_PERIPH, param + r.begin, l);
-        if (which_p != 255) {
-            param += r.end;
-            r = word_catch(param);
-            l = r.end - r.begin;
-            if (l) {
-                u8 which_s = word_match(en_dis, 2, param + r.begin, l);
-                if (which_s != 255) {
-                    RCC_APB2PeriphClockCmd(periph[which_p], status[which_s]);
-                    string_copy("ok", output);
-                    return 0;
-                }
-            }
+u8 rcc_handler() {
+    u8 which_p = word_match(PERIPH_KW, NUM_OF_PERIPH);
+    if (which_p < 254) {
+        u8 which_s = word_match(STATUS_KW, 2);
+        if (which_s < 254) {
+            RCC_APB2PeriphClockCmd(PERIPH[which_p], STATUS[which_s]);
+            set_output("ok");
+            return 0;
         }
     }
-    // error
-    string_copy("parameter error", output);
+    set_output("parameter error");
     return 1;
 }

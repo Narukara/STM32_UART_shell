@@ -1,6 +1,5 @@
 #include "stm32f10x.h"
 
-#include "echo.h"
 #include "gpio.h"
 #include "help.h"
 #include "nar_string.h"
@@ -8,34 +7,28 @@
 #include "shell.h"
 
 // here to add cmd
-const u8 NUM_OF_CMDS = 4;
-const struct keyword CMDS_LIST[] = {
-    {"help", 4},
-    {"echo", 4},
-    {"rcc", 3},
-    {"gpio", 4},
+const u8 NUM_OF_CMDS = 3;
+const char* CMDS_KW[] = {
+    "help",
+    "rcc",
+    "gpio",
 };
-static const u8 (*handler[])(const char*, char*) = {
+static const u8 (*CMD_handler[])() = {
     help_handler,
-    echo_handler,
     rcc_handler,
     gpio_handler,
 };
 
-u8 cmd_handler(const char* cmd, char* output) {
-    struct range r = word_catch(cmd);
-    u8 l = r.end - r.begin;
-    if (l) {
-        u8 h = word_match(CMDS_LIST, NUM_OF_CMDS, cmd + r.begin, l);
-        if (h != 255) {
-            return handler[h](cmd + r.end, output);
-        } else {
-            string_copy("cmd not found", output);
-            return 1;
-        }
-    } else {
-        // nothing input
-        output[0] = 0;
+u8 cmd_handler() {
+    word_match_reset();
+    u8 which = word_match(CMDS_KW, NUM_OF_CMDS);
+    if (which < 254) {
+        return CMD_handler[which]();
+    } else if (which == 254) {
+        set_output("\e[A");
         return 0;
+    } else {
+        set_output("cmd not found");
+        return 1;
     }
 }

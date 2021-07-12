@@ -6,6 +6,12 @@
 #include "shell.h"
 #include "uart.h"
 
+#define MAX_IN 64
+#define MAX_OUT 64
+
+char input_buffer[MAX_IN];
+char output_buffer[MAX_OUT];
+
 /**
  * PC13 is a LED
  */
@@ -45,18 +51,14 @@ int main() {
     USART_Cmd(USART1, ENABLE);
 
     // welcome
-    uart_send("\r\n--- stm32 shell: Hello! ---\r\n");
-    uart_send("stm32>");
+    uart_send("\r\n\e[1m--- stm32 shell: Hello! ---\e[0m\r\n");
+    uart_send("\e[33mstm32>\e[0m");
 
     while (1) {
     }
 }
 
-#define MAX_IN 64
-#define MAX_OUT 64
-
 void USART1_IRQHandler(void) {
-    static char input[MAX_IN];  // command should < MAX_IN
     static u8 now = 0;
     USART_ClearFlag(USART1, USART_FLAG_RXNE);
     u8 data = USART_ReceiveData(USART1);
@@ -69,18 +71,17 @@ void USART1_IRQHandler(void) {
             break;
         case 13:  // \r, finish input
             uart_send("\r\n");
-            input[now] = 0;
+            input_buffer[now] = 0;
             now = 0;
-            char output[MAX_OUT];
-            if (cmd_handler(input, output)) {
-                uart_send("ERROR:");
+            if (cmd_handler()) {
+                uart_send("\e[31mERROR:\e[0m");
             }
-            uart_send(output);
-            uart_send("\r\nstm32>");
+            uart_send(output_buffer);
+            uart_send("\r\n\e[33mstm32>\e[0m");
             break;
         default:
             if (data >= ' ' && now < MAX_IN - 1) {
-                input[now++] = data;
+                input_buffer[now++] = data;
                 uart_send_bit(data);
             }
     }
