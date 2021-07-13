@@ -2,5 +2,5 @@
 
 Communicate with STM32 via UART, and use it like a shell !
 
-![ps](.assets/ps.png)
+![shell](.assets/shell.png)
 
