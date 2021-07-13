@@ -14,9 +14,9 @@ static const char* STATUS_KW[] = {"en", "dis"};
 static const FunctionalState STATUS[] = {ENABLE, DISABLE};
 
 u8 rcc_handler() {
-    u8 which_p = word_match(PERIPH_KW, NUM_OF_PERIPH);
+    u8 which_p = match_word(PERIPH_KW, NUM_OF_PERIPH);
     if (which_p < 254) {
-        u8 which_s = word_match(STATUS_KW, 2);
+        u8 which_s = match_word(STATUS_KW, 2);
         if (which_s < 254) {
             RCC_APB2PeriphClockCmd(PERIPH[which_p], STATUS[which_s]);
             set_output("ok");

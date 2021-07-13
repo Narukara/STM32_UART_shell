@@ -5,7 +5,7 @@ extern const u8 NUM_OF_CMDS;
 extern const char* CMDS_KW[];
 
 // here to add cmd info
-static const char* ALL_CMDS_info = "All cmd: help rcc gpio";
+static const char* ALL_CMDS_info = "All cmd: help rcc gpio spi";
 static const char* CMD_info[] = {
     "help [cmd]",
     "rcc [periph] en/dis\r\n"
@@ -14,10 +14,14 @@ static const char* CMD_info[] = {
     "gpio read [port] [num]\r\n"
     "gpio write [port] [num] 0/1\r\n"
     "e.g. gpio init C 13 opp 2",
+    "spi init\r\n"
+    "spi cs 0/1\r\n"
+    "spi send [hex]\r\n"
+    "e.g. spi send 0x1a",
 };
 
 u8 help_handler() {
-    u8 which = word_match(CMDS_KW, NUM_OF_CMDS);
+    u8 which = match_word(CMDS_KW, NUM_OF_CMDS);
     if (which < 254) {
         set_output(CMD_info[which]);
         return 0;

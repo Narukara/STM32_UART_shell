@@ -24,7 +24,7 @@ void set_output(const char* s) {
     output_buffer[i] = 0;
 }
 
-void word_match_reset() {
+void match_reset() {
     input_now = input_buffer;
 }
 
@@ -81,7 +81,7 @@ static struct range word_catch() {
 /**
  * @return 254 if no input, 255 if no match
  */
-u8 word_match(const char* words[], u8 num_of_words) {
+u8 match_word(const char* words[], u8 num_of_words) {
     struct range r = word_catch();
     if (r.end == 0) {
         return 254;
@@ -103,4 +103,44 @@ u8 dec_to_u8(const char* p) {
         r += p[i] - 48;
     }
     return r;
+}
+
+#define is_hex(a)                                                \
+    (((a) >= '0' && (a) <= '9') || ((a) >= 'a' && (a) <= 'f') || \
+     ((a) >= 'A' && (a) <= 'F'))
+
+struct error_num match_hex() {
+    struct error_num en = {0, 0};
+    struct range r = word_catch();
+    u8 l = r.end - r.begin;
+    if (l != 4 || input_now[r.begin] != '0' || input_now[r.begin + 1] != 'x' ||
+        !is_hex(input_now[r.begin + 2]) || !is_hex(input_now[r.begin + 3])) {
+        en.is_ok = 1;
+        return en;
+    }
+    char a = input_now[r.begin + 2];
+    if (a <= '9') {
+        en.num |= (a - '0');
+    } else if (a <= 'F') {
+        en.num |= (a - 55);
+    } else {
+        en.num |= (a - 87);
+    }
+    en.num <<= 4;
+    a = input_now[r.begin + 3];
+    if (a <= '9') {
+        en.num |= (a - '0');
+    } else if (a <= 'F') {
+        en.num |= (a - 55);
+    } else {
+        en.num |= (a - 87);
+    }
+    input_now += r.end;
+    return en;
+}
+
+void u8_to_hex(u8 num, char* hex) {
+    char* t = "0123456789abcdef";
+    hex[0] = t[(num & 0xf0) >> 4];
+    hex[1] = t[num & 0x0f];
 }

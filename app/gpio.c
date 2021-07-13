@@ -40,21 +40,21 @@ static GPIOSpeed_TypeDef SPEED[] = {
 };
 
 u8 gpio_handler() {
-    u8 which_op = word_match(OP_KW, NUM_OF_OP);
+    u8 which_op = match_word(OP_KW, NUM_OF_OP);
     if (which_op >= NUM_OF_OP)
         goto error;
-    u8 which_port = word_match(PORT_KW, NUM_OF_PORT);
+    u8 which_port = match_word(PORT_KW, NUM_OF_PORT);
     if (which_port >= NUM_OF_PORT)
         goto error;
-    u8 which_pin = word_match(NUMS, 16);
+    u8 which_pin = match_word(NUMS, 16);
     if (which_pin >= 16)
         goto error;
     if (which_op == 0) {
         // init
-        u8 which_mode = word_match(MODE_KW, 8);
+        u8 which_mode = match_word(MODE_KW, 8);
         if (which_mode >= 8)
             goto error;
-        u8 which_speed = word_match(SPEED_KW, 3);
+        u8 which_speed = match_word(SPEED_KW, 3);
         if (which_speed >= 3)
             goto error;
         GPIO_Init(PORT[which_port], &(GPIO_InitTypeDef){
@@ -72,7 +72,7 @@ u8 gpio_handler() {
         }
     } else {
         // write
-        u8 which_0_1 = word_match(NUMS, 2);
+        u8 which_0_1 = match_word(NUMS, 2);
         if (which_0_1 >= 2)
             goto error;
         GPIO_WriteBit(PORT[which_port], PIN[which_pin], which_0_1);
