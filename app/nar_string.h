@@ -9,7 +9,6 @@ struct error_num {
 };
 
 u8 string_length(const char* p);
-void set_output(const char* s);
 void match_reset();
 u8 match_word(const char* words[], u8 num_of_words);
 struct error_num match_hex();

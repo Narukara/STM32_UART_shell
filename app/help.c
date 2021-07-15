@@ -1,4 +1,5 @@
 #include "nar_string.h"
+#include "uart.h"
 
 // from shell.c
 extern const u8 NUM_OF_CMDS;
@@ -27,14 +28,14 @@ static const char* CMD_info[] = {
 
 u8 help_handler() {
     u8 which = match_word(CMDS_KW, NUM_OF_CMDS);
-    if (which < 254) {
-        set_output(CMD_info[which]);
+    if (which < NUM_OF_CMDS) {
+        uart_send(CMD_info[which]);
         return 0;
     } else if (which == 254) {
-        set_output(ALL_CMDS_info);
+        uart_send(ALL_CMDS_info);
         return 0;
     } else {
-        set_output("No such command");
+        uart_send("No such command");
         return 1;
     }
 }

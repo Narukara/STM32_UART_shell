@@ -1,5 +1,7 @@
-#include "nar_string.h"
 #include "stm32f10x_rcc.h"
+
+#include "nar_string.h"
+#include "uart.h"
 
 #define NUM_OF_PERIPH 6
 static const char* PERIPH_KW[] = {
@@ -15,14 +17,17 @@ static const FunctionalState STATUS[] = {ENABLE, DISABLE};
 
 u8 rcc_handler() {
     u8 which_p = match_word(PERIPH_KW, NUM_OF_PERIPH);
-    if (which_p < 254) {
-        u8 which_s = match_word(STATUS_KW, 2);
-        if (which_s < 254) {
-            RCC_APB2PeriphClockCmd(PERIPH[which_p], STATUS[which_s]);
-            set_output("ok");
-            return 0;
-        }
+    if (which_p >= NUM_OF_PERIPH) {
+        goto error;
     }
-    set_output("parameter error");
+    u8 which_s = match_word(STATUS_KW, 2);
+    if (which_s >= 2) {
+        goto error;
+    }
+    RCC_APB2PeriphClockCmd(PERIPH[which_p], STATUS[which_s]);
+    uart_send("ok");
+    return 0;
+error:
+    uart_send("parameter error");
     return 1;
 }

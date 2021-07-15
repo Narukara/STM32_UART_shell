@@ -7,10 +7,8 @@
 #include "uart.h"
 
 #define MAX_IN 64
-#define MAX_OUT 64
 
 char input_buffer[MAX_IN];
-char output_buffer[MAX_OUT];
 
 /**
  * PC13 is a LED
@@ -51,8 +49,8 @@ int main() {
     USART_Cmd(USART1, ENABLE);
 
     // welcome
-    uart_send("\r\n\e[1m--- stm32 shell: Hello! ---\e[0m\r\n");
-    uart_send("\e[33mstm32>\e[0m");
+    uart_send("\r\n\e[1m--- stm32 shell: Hello! ---\e[0m");
+    uart_send("\r\n\e[33mstm32>\e[0m");
 
     while (1) {
     }
@@ -74,9 +72,8 @@ void USART1_IRQHandler(void) {
             input_buffer[now] = 0;
             now = 0;
             if (cmd_handler()) {
-                uart_send("\e[31mERROR:\e[0m");
+                uart_send("\e[31m [ERROR]\e[0m");
             }
-            uart_send(output_buffer);
             uart_send("\r\n\e[33mstm32>\e[0m");
             break;
         default:

@@ -3,6 +3,7 @@
 #include "stm32f10x_rcc.h"
 
 #include "nar_string.h"
+#include "uart.h"
 
 void i2c_init() {
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C1, ENABLE);
@@ -79,19 +80,19 @@ u8 i2c_handler() {
     if (which_op == 0) {
         // init
         i2c_init();
-        set_output("ok");
+        uart_send("ok");
         return 0;
     } else if (which_op == 1) {
         // write
-        set_output("ok");
+        uart_send("ok");
         return 0;
     } else {
         // read
-        set_output("ok");
+        uart_send("ok");
         return 0;
     }
 
 error:
-    set_output("parameter error");
+    uart_send("parameter error");
     return 1;
 }

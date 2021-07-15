@@ -1,11 +1,14 @@
-#include "nar_string.h"
 #include "stm32f10x.h"
+
+#include "nar_string.h"
 
 // from main.c
 extern const char input_buffer[];
-extern char output_buffer[];
 static const char* input_now;
 
+/**
+ * @return length of string p
+ */
 u8 string_length(const char* p) {
     u8 i = 0;
     while (p[i] != 0)
@@ -14,16 +17,8 @@ u8 string_length(const char* p) {
 }
 
 /**
- * WARNING: make sure length(s) < length(output_buffer)
+ * Only used in shell.c
  */
-void set_output(const char* s) {
-    u8 i = 0;
-    for (; s[i] != 0; i++) {
-        output_buffer[i] = s[i];
-    }
-    output_buffer[i] = 0;
-}
-
 void match_reset() {
     input_now = input_buffer;
 }
@@ -53,6 +48,16 @@ struct range {
     u8 end;
 };
 
+/**
+ *      _  _   c  m  d _  _ /0
+ *      |      |       |
+ *     now  now+begin  now+end
+ *
+ *      _  _   _   _   _ /0
+ *      |
+ *     now    begin = end = 0
+ *
+ */
 static struct range word_catch() {
     struct range r = {0, 0};
     u8 found = 0, i = 0;
@@ -109,6 +114,9 @@ u8 dec_to_u8(const char* p) {
     (((a) >= '0' && (a) <= '9') || ((a) >= 'a' && (a) <= 'f') || \
      ((a) >= 'A' && (a) <= 'F'))
 
+/**
+ * Match input in the form of 0xab, where ab is a hexadecimal number
+ */
 struct error_num match_hex() {
     struct error_num en = {0, 0};
     struct range r = word_catch();

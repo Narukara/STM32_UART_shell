@@ -1,5 +1,7 @@
-#include "nar_string.h"
 #include "stm32f10x_gpio.h"
+
+#include "nar_string.h"
+#include "uart.h"
 
 #define NUM_OF_OP 3
 static const char* OP_KW[] = {
@@ -62,13 +64,13 @@ u8 gpio_handler() {
                                         .GPIO_Mode = MODE[which_mode],
                                         .GPIO_Speed = SPEED[which_speed],
                                     });
-        set_output("ok");
+        uart_send("ok");
     } else if (which_op == 1) {
         // read
         if (GPIO_ReadInputDataBit(PORT[which_port], PIN[which_pin])) {
-            set_output("1");
+            uart_send("1");
         } else {
-            set_output("0");
+            uart_send("0");
         }
     } else {
         // write
@@ -76,10 +78,10 @@ u8 gpio_handler() {
         if (which_0_1 >= 2)
             goto error;
         GPIO_WriteBit(PORT[which_port], PIN[which_pin], which_0_1);
-        set_output("ok");
+        uart_send("ok");
     }
     return 0;
 error:
-    set_output("parameter error");
+    uart_send("parameter error");
     return 1;
 }

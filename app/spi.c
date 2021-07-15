@@ -1,7 +1,9 @@
-#include "nar_string.h"
 #include "stm32f10x_gpio.h"
 #include "stm32f10x_rcc.h"
 #include "stm32f10x_spi.h"
+
+#include "nar_string.h"
+#include "uart.h"
 
 /**
  * SPI1
@@ -58,7 +60,7 @@ u8 spi_handler() {
     if (which_op == 0) {
         // init
         spi_init();
-        set_output("ok");
+        uart_send("ok");
         return 0;
     } else if (which_op == 1) {
         // cs
@@ -67,7 +69,7 @@ u8 spi_handler() {
             goto error;
         }
         GPIO_WriteBit(GPIOA, GPIO_Pin_4, which_cs ? Bit_SET : Bit_RESET);
-        set_output("ok");
+        uart_send("ok");
         return 0;
     } else {
         // send
@@ -77,10 +79,10 @@ u8 spi_handler() {
         }
         char out[] = "receive: 0x  ";
         u8_to_hex(spi_send(en.num), out + 11);
-        set_output(out);
+        uart_send(out);
         return 0;
     }
 error:
-    set_output("parameter error");
+    uart_send("parameter error");
     return 1;
 }

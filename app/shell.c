@@ -7,34 +7,29 @@
 #include "rcc.h"
 #include "shell.h"
 #include "spi.h"
+#include "uart.h"
 
 // here to add cmd
 const u8 NUM_OF_CMDS = 5;
 const char* CMDS_KW[] = {
-    "help",
-    "rcc",
-    "gpio",
-    "spi",
-    "i2c",
+    "help", "rcc", "gpio", "spi", "i2c",
 };
 static const u8 (*CMD_handler[])() = {
-    help_handler,
-    rcc_handler,
-    gpio_handler,
-    spi_handler,
-    i2c_handler,
+    help_handler, rcc_handler, gpio_handler, spi_handler, i2c_handler,
 };
 
 u8 cmd_handler() {
     match_reset();
     u8 which = match_word(CMDS_KW, NUM_OF_CMDS);
-    if (which < 254) {
+    if (which < NUM_OF_CMDS) {
         return CMD_handler[which]();
     } else if (which == 254) {
-        set_output("\e[A");
+        // no input
+        uart_send("\e[A");
         return 0;
     } else {
-        set_output("cmd not found");
+        // bad input
+        uart_send("cmd not found");
         return 1;
     }
 }
