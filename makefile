@@ -1,13 +1,14 @@
 CC = arm-none-eabi-gcc -mthumb -mcpu=cortex-m3 -g
 LINK = -specs=nosys.specs -static -Wl,-cref,-u,Reset_Handler -Wl,-Map=build/target.map -Wl,--gc-sections -Wl,--defsym=malloc_getpagesize_P=0x80 -Wl,--start-group -lc -lm -Wl,--end-group
-SRC = *.c lib/*.c lib/*.s app/*.c
+SRC = *.c lib/*.c app/*.c
 HEAD = *.h lib/*.h app/*.h
 INC = -I . -I lib -I app
 PWD = $(shell pwd)
 LD = -T lib/stm32_flash_md.ld
 MACRO = -D USE_STDPERIPH_DRIVER -D STM32F10X_MD -D USE_FULL_ASSERT
 DEVICE = target/stm32f1x.cfg
-# 使用不同芯片：更改LD, MACRO, DEVICE
+STARTUP = lib/startup_stm32f10x_md.s
+# 使用不同芯片：更改LD, MACRO, DEVICE, STARTUP
 
 # flash: 串口下载, download: stlink下载
 .PHONY: build clean download flash debug size
@@ -20,8 +21,8 @@ build/target.bin : build/target.elf
 build/target.hex : build/target.elf
 	arm-none-eabi-objcopy $< -Oihex $@
 
-build/target.elf : $(SRC) $(HEAD)
-	$(CC) -o $@ $(SRC) $(INC) $(LD) $(MACRO) $(LINK)
+build/target.elf : $(SRC) $(STARTUP) $(HEAD)
+	$(CC) -o $@ $(SRC) $(STARTUP) $(INC) $(LD) $(MACRO) $(LINK)
 
 size :
 	arm-none-eabi-size build/target.elf -G

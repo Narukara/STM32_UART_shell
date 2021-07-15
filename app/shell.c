@@ -2,24 +2,27 @@
 
 #include "gpio.h"
 #include "help.h"
+#include "i2c.h"
 #include "nar_string.h"
 #include "rcc.h"
 #include "shell.h"
 #include "spi.h"
 
 // here to add cmd
-const u8 NUM_OF_CMDS = 4;
+const u8 NUM_OF_CMDS = 5;
 const char* CMDS_KW[] = {
     "help",
     "rcc",
     "gpio",
     "spi",
+    "i2c",
 };
 static const u8 (*CMD_handler[])() = {
     help_handler,
     rcc_handler,
     gpio_handler,
     spi_handler,
+    i2c_handler,
 };
 
 u8 cmd_handler() {
