@@ -20,10 +20,10 @@ static const char* CMD_info[] = {
     "    send [hex]\r\n"
     "e.g. spi send 0x1a",
     "i2c init\r\n"
-    "    write [addr] [data]...\r\n"
-    "    read [addr] [num]\r\n"
+    "    write [addr] [data]...(<16)\r\n"
+    "    read [addr] [num](<256)\r\n"
     "e.g. i2c write 0x3c 0x80 0x8d\r\n"
-    "     i2c read 0x3c 2",
+    "     i2c read 0x3c 4",
 };
 
 u8 help_handler() {

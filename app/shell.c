@@ -14,7 +14,7 @@ const u8 NUM_OF_CMDS = 5;
 const char* CMDS_KW[] = {
     "help", "rcc", "gpio", "spi", "i2c",
 };
-static const u8 (*CMD_handler[])() = {
+static u8 (*const CMD_handler[])() = {
     help_handler, rcc_handler, gpio_handler, spi_handler, i2c_handler,
 };
 

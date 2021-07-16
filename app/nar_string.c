@@ -7,16 +7,6 @@ extern const char input_buffer[];
 static const char* input_now;
 
 /**
- * @return length of string p
- */
-u8 string_length(const char* p) {
-    u8 i = 0;
-    while (p[i] != 0)
-        i++;
-    return i;
-}
-
-/**
  * Only used in shell.c
  */
 void match_reset() {
@@ -101,13 +91,28 @@ u8 match_word(const char* words[], u8 num_of_words) {
     return 255;
 }
 
-u8 dec_to_u8(const char* p) {
-    u8 r = 0;
-    for (u8 i = 0; p[i] >= '0' && p[i] <= '9'; i++) {
-        r *= 10;
-        r += p[i] - 48;
+struct error_num match_dec() {
+    struct error_num en = {0, 0};
+    struct range r = word_catch();
+    if (r.end == 0) {
+        en.is_ok = 1;
+        return en;
     }
-    return r;
+    const char* temp = input_now + r.begin;
+    u8 i = 0;
+    while (1) {
+        if (temp[i] >= '0' && temp[i] <= '9') {
+            en.num *= 10;
+            en.num += temp[i] - 48;
+            i++;
+        } else if (temp[i] == ' ' || temp[i] == 0) {
+            input_now += r.end;
+            return en;
+        } else {
+            en.is_ok = 1;
+            return en;
+        }
+    }
 }
 
 #define is_hex(a)                                                \

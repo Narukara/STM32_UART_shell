@@ -1,3 +1,5 @@
+#include <stdlib.h>
+
 #include "stm32f10x_gpio.h"
 #include "stm32f10x_i2c.h"
 #include "stm32f10x_rcc.h"
@@ -84,14 +86,45 @@ u8 i2c_handler() {
         return 0;
     } else if (which_op == 1) {
         // write
+        u8 data[16];
+        u8 num = 0;
+        do {
+            struct error_num en = match_hex();
+            if (en.is_ok) {
+                break;
+            }
+            data[num++] = en.num;
+        } while (num < 16);
+        if (num < 2) {
+            goto error;
+        }
+        i2c_write(data[0] << 1, data[1], data + 2, num - 2);
         uart_send("ok");
         return 0;
     } else {
         // read
-        uart_send("ok");
+        struct error_num en = match_hex();
+        if (en.is_ok) {
+            goto error;
+        }
+        struct error_num en2 = match_dec();
+        if (en2.is_ok) {
+            goto error;
+        }
+        u8* data = malloc(sizeof(u8) * en2.num);
+        if (data == NULL) {
+            uart_send("No enough space");
+            return 1;
+        }
+        i2c_read(en.num << 1, data, en2.num);
+        char temp[] = "0x__ ";
+        for (u8 i = 0; i < en2.num; i++) {
+            u8_to_hex(data[i], temp + 2);
+            uart_send(temp);
+        }
+        free(data);
         return 0;
     }
-
 error:
     uart_send("parameter error");
     return 1;
