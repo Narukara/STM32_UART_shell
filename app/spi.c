@@ -8,7 +8,7 @@
 /**
  * SPI1
  * occupied GPIO:
- * PA4  CS (Manual)
+ * PA4  CS
  * PA5  SCLK
  * PA6  MISO
  * PA7  MOSI
@@ -47,10 +47,8 @@ u8 spi_send(u8 data) {
     return SPI_I2S_ReceiveData(SPI1);
 }
 
-#define NUM_OF_OP 3
-static const char* OP[] = {"init", "cs", "send"};
-
-static const char* CS[] = {"0", "1"};
+#define NUM_OF_OP 2
+static const char* OP[] = {"init", "send"};
 
 u8 spi_handler() {
     u8 which_op = match_word(OP, NUM_OF_OP);
@@ -62,24 +60,27 @@ u8 spi_handler() {
         spi_init();
         uart_send("ok");
         return 0;
-    } else if (which_op == 1) {
-        // cs
-        u8 which_cs = match_word(CS, 2);
-        if (which_cs >= 2) {
-            goto error;
-        }
-        GPIO_WriteBit(GPIOA, GPIO_Pin_4, which_cs ? Bit_SET : Bit_RESET);
-        uart_send("ok");
-        return 0;
     } else {
         // send
-        struct error_num en = match_hex();
-        if (en.is_ok) {
+        u8 data[16];
+        u8 num = 0;
+        do {
+            struct error_num en = match_hex();
+            if (en.is_ok) {
+                break;
+            }
+            data[num++] = en.num;
+        } while (num < 16);
+        if (num == 0) {
             goto error;
         }
-        char out[] = "receive: 0x  ";
-        u8_to_hex(spi_send(en.num), out + 11);
-        uart_send(out);
+        char temp[] = "0x__ ";
+        GPIO_WriteBit(GPIOA, GPIO_Pin_4, Bit_RESET);
+        for (u8 i = 0; i < num; i++) {
+            u8_to_hex(spi_send(data[i]), temp + 2);
+            uart_send(temp);
+        }
+        GPIO_WriteBit(GPIOA, GPIO_Pin_4, Bit_SET);
         return 0;
     }
 error:

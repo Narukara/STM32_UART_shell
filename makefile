@@ -1,5 +1,5 @@
 CC = arm-none-eabi-gcc -mthumb -mcpu=cortex-m3 -g -Wall -Wextra
-LINK = -specs=nosys.specs -static -Wl,-cref,-u,Reset_Handler -Wl,-Map=build/target.map -Wl,--gc-sections -Wl,--defsym=malloc_getpagesize_P=0x80 -Wl,--start-group -lc -lm -Wl,--end-group
+LINK = -specs=nano.specs -specs=nosys.specs -static -Wl,-cref,-u,Reset_Handler -Wl,-Map=build/target.map -Wl,--gc-sections -Wl,--defsym=malloc_getpagesize_P=0x80 -Wl,--start-group -lc -lm -Wl,--end-group
 SRC = *.c lib/*.c app/*.c
 HEAD = *.h lib/*.h app/*.h
 INC = -I . -I lib -I app

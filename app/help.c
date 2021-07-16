@@ -16,9 +16,8 @@ static const char* CMD_info[] = {
     "     write [port] [num] 0/1\r\n"
     "e.g. gpio init C 13 opp 2",
     "spi init\r\n"
-    "    cs 0/1\r\n"
-    "    send [hex]\r\n"
-    "e.g. spi send 0x1a",
+    "    send [data]...(<16)\r\n"
+    "e.g. spi send 0x1a 0xff",
     "i2c init\r\n"
     "    write [addr] [data]...(<16)\r\n"
     "    read [addr] [num](<256)\r\n"
