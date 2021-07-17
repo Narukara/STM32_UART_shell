@@ -6,7 +6,7 @@ extern const u8 NUM_OF_CMDS;
 extern const char* CMDS_KW[];
 
 // here to add cmd info
-static const char* ALL_CMDS_info = "All cmd: help rcc gpio spi i2c";
+static const char* ALL_CMDS_info = "All cmd: help rcc gpio spi i2c adc";
 static const char* CMD_info[] = {
     "help [cmd]",
     "rcc [periph] en/dis\r\n"
@@ -23,6 +23,9 @@ static const char* CMD_info[] = {
     "    read [addr] [num](<256)\r\n"
     "e.g. i2c write 0x3c 0x80 0x8d\r\n"
     "     i2c read 0x3c 4",
+    "adc init [channel]\r\n"
+    "    read\r\n"
+    "e.g. adc init 0",
 };
 
 u8 help_handler() {

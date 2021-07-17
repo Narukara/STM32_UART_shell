@@ -153,7 +153,19 @@ struct error_num match_hex() {
 }
 
 void u8_to_hex(u8 num, char* hex) {
-    char* t = "0123456789abcdef";
+    const char* t = "0123456789abcdef";
     hex[0] = t[(num & 0xf0) >> 4];
     hex[1] = t[num & 0x0f];
+}
+
+/**
+ * only used in adc
+ * max = 4095
+ */
+void u12_to_dec(u16 num, char* dec) {
+    for (u8 i = 3; i < 4; i--) {
+        u8 b = num % 10;
+        dec[i] = '0' + b;
+        num /= 10;
+    }
 }

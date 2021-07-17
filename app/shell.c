@@ -1,5 +1,6 @@
 #include "stm32f10x.h"
 
+#include "adc.h"
 #include "gpio.h"
 #include "help.h"
 #include "i2c.h"
@@ -10,12 +11,11 @@
 #include "uart.h"
 
 // here to add cmd
-const u8 NUM_OF_CMDS = 5;
-const char* CMDS_KW[] = {
-    "help", "rcc", "gpio", "spi", "i2c",
-};
+const u8 NUM_OF_CMDS = 6;
+const char* CMDS_KW[] = {"help", "rcc", "gpio", "spi", "i2c", "adc"};
 static u8 (*const CMD_handler[])() = {
-    help_handler, rcc_handler, gpio_handler, spi_handler, i2c_handler,
+    help_handler, rcc_handler, gpio_handler,
+    spi_handler,  i2c_handler, adc_handler,
 };
 
 u8 cmd_handler() {
