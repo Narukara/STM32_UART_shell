@@ -53,6 +53,7 @@ int main() {
     uart_send("\r\n\e[33mstm32>\e[0m");
 
     while (1) {
+        __WFI();  // sleep
     }
 }
 
